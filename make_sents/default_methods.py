@@ -1,25 +1,6 @@
-from functools import wraps
-
-def add_doc(factory):
+def raise_(error, msg=None, doc=None):
     """
-    Add `doc` keyword argument to factory. If `doc` is provided,
-    the factory will add a docstring to the functions it produces.
-    """
-    @wraps(factory)
-    def wrapper(*args, doc=None, **kwargs):
-        func = factory(*args, **kwargs)
-
-        if doc is not None:
-            func.__doc__ = doc
-
-        return func
-
-    return wrapper
-
-@add_doc
-def raise_(error, msg=None):
-    """
-    Return a function that raises an error with an optional message.
+    Return a method that raises an error with an optional message.
     """
     if msg is None:
         def error_raiser(self):
@@ -29,18 +10,22 @@ def raise_(error, msg=None):
         def error_raiser(self):
             raise error(msg)
 
+    if doc is not None:
+        error_raiser.__doc__ = doc
+
     return error_raiser
 
-@add_doc
-def return_(value):
+def return_(value, doc=None):
+    """
+    Return a method that will return `value`.
+    """
     def default_value(self):
         return value
 
-    return default_value
+    if doc is not None:
+        default_value.__doc__ = doc
 
-@add_doc
-def property_(func):
-    return property(func)
+    return default_value
 
 def DEFAULT_ITER(self):
     """
@@ -49,22 +34,43 @@ def DEFAULT_ITER(self):
     return
     yield
 
-def make_init(attrs):
-    def __init__(self):
-        for attr, val in attrs.items():
-            object.__setattr__(self, attr, val)
-
-    return __init__
-
 def DEFAULT_GET(default):
+    """
+    Return a __getattr__ implementation that will return `default`.
+    """
     def __getattr__(self, attr):
         return default
 
     return __getattr__
 
 def IGNORE_SETATTR(self, attr, value):
+    """
+    A __setattr__ implementation that does nothing.
+    """
     pass
 
-IDENTITY = property_(lambda self: self, doc='Identity.')
-READONLY = raise_(AttributeError, msg="can't set attribute")
-RETURNNONE = PASS = return_(None)
+def READONLY(self, attr, value):
+    """
+    A __setattr__ implementation that raises an AttributeError.
+    """
+    raise AttributeError("can't set attribute")
+
+@property
+def IDENTITY(self):
+    """
+    Identity property.
+    """
+    return self
+
+def make_init(attrs: dict):
+    """
+    Return an __init__ method that calls object's `__setattr__` on each
+    item of attrs.
+    """
+    def __init__(self):
+        for attr, val in attrs.items():
+            object.__setattr__(self, attr, val)
+
+    return __init__
+
+RETURN_NONE = PASS = return_(None)
