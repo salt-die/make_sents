@@ -34,6 +34,13 @@ def DEFAULT_ITER(self):
     return
     yield
 
+@property
+def IDENTITY(self):
+    """
+    Identity property.
+    """
+    return self
+
 def DEFAULT_GET(default):
     """
     Return a __getattr__ implementation that will return `default`.
@@ -54,13 +61,6 @@ def READONLY(self, attr, value):
     A __setattr__ implementation that raises an AttributeError.
     """
     raise AttributeError("can't set attribute")
-
-@property
-def IDENTITY(self):
-    """
-    Identity property.
-    """
-    return self
 
 def make_init(attrs: dict):
     """
