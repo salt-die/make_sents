@@ -41,7 +41,7 @@ def IDENTITY(self):
     """
     return self
 
-def DEFAULT_GET(default):
+def _DEFAULT_GET(default):
     """
     Return a __getattr__ implementation that will return `default`.
     """
@@ -50,19 +50,19 @@ def DEFAULT_GET(default):
 
     return __getattr__
 
-def IGNORE_SETATTR(self, attr, value):
+def _IGNORE_SETATTR(self, attr, value):
     """
     A __setattr__ implementation that does nothing.
     """
     pass
 
-def READONLY(self, attr, value):
+def _READONLY(self, attr, value):
     """
     A __setattr__ implementation that raises an AttributeError.
     """
     raise AttributeError("can't set attribute")
 
-def make_init(attrs: dict):
+def _make_init(attrs: dict):
     """
     Return an __init__ method that calls object's `__setattr__` on each
     item of attrs.
