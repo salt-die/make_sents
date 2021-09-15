@@ -66,7 +66,7 @@ def make_sents(
     if str is not None:
         cls.__str__ = default_methods.return_(str)
 
-    if setattr == 'ignore'':
+    if setattr == 'ignore':
         cls.__setattr__ = default_methods._IGNORE_SETATTR
     elif setattr == 'readonly':
         cls.__setattr__ = default_methods._READONLY
