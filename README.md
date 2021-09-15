@@ -54,20 +54,26 @@ In [9]: for leaf in EMPTY_NODE.iter_nodes():
 In [10]: EMPTY_NODE.a = 10
 
 In [11]: EMPTY_NODE.b  # None returned
+
 ```
 (The `getattr` kwarg specifies a default value or method for missing attributes and the `ignore` option for `setattr` kwarg specifies behavior when setting an attribute.)
 
+As a decorator, the parenthesis are optional if no kwargs are supplied:
+```py
+In [12]: @make_sents
+    ...: class MAKE_SENTS:
+    ...:     def iter_nodes(self):
+    ...:         return
+    ...:         yield
+    ...:
+
+In [13]: MAKE_SENTS
+Out[13]: SENTINEL
+```
+
 Of course, above can be in-lined:
 ```py
-In [1]: from make_sents import DEFAULT_ITER, make_sents
-   ...: EMPTY_NODE = make_sents(None, getattr=None, setattr='ignore', repr='EMPTY_NODE', methods={'iter_nodes': DEFAULT_ITER})
+In [14]: from make_sents import DEFAULT_ITER, make_sents
+    ...: EMPTY_NODE = make_sents(None, methods={'iter_nodes': DEFAULT_ITER})
 
-In [2]: EMPTY_NODE.a
-
-In [3]: EMPTY_NODE.b = 10
-
-In [4]: for leaf in EMPTY_NODE.iter_nodes():
-   ...:     print(leaf)
-   ...:
-# Nothing printed
 ```
