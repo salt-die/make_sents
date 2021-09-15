@@ -1,4 +1,5 @@
 from functools import partial
+from importlib import import_module
 from inspect import isgeneratorfunction, signature
 
 from . import default_methods
@@ -91,7 +92,7 @@ def make_sents(
     if abc is not None:
         METHOD_TEMPLATE = f'def {{}}{{}}:\n    return\n    {{}}\n'
         for method_name in abc.__abstractmethods__:
-            method = getattr(abc, method_name)
+            method = __builtins__['getattr'](abc, method_name)
             source = METHOD_TEMPLATE.format(method_name, signature(method), 'yield' if isgeneratorfunction(method) else '')
             exec(source, globals(), namespace)
 
@@ -99,6 +100,6 @@ def make_sents(
         namespace |= methods
 
     for name, method in namespace.items():
-        setattr(cls, name, method)
+        __builtins__['setattr'](cls, name, method)
 
     return cls()
