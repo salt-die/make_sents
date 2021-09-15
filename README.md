@@ -34,7 +34,7 @@ AttributeError                            Traceback (most recent call last)
 AttributeError: can't set attribute
 ```
 
-`make_sents` can also be used to decorate a class:
+`make_sents` can also be used to decorate a class. As a decorator, `make_sents` will add any number of default methods or attributes and instantiate and return the sentinal:
 
 ```py
 In [7]: @make_sents(getattr=None, setattr='ignore', repr='EMPTY_NODE')
@@ -53,6 +53,21 @@ In [9]: for leaf in EMPTY_NODE.iter_nodes():
 
 In [10]: EMPTY_NODE.a = 10
 
-In [11]: EMPTY_NODE.b
+In [11]: EMPTY_NODE.b  # None returned
 ```
-The `getattr` kwarg specifies a default value or method for missing attributes and the `ignore` option for `setattr` kwarg specifies behavior when setting an attribute.
+(The `getattr` kwarg specifies a default value or method for missing attributes and the `ignore` option for `setattr` kwarg specifies behavior when setting an attribute.)
+
+Of course, above can be in-lined:
+```py
+In [1]: from make_sents import DEFAULT_ITER, make_sents
+   ...: EMPTY_NODE = make_sents(None, getattr=None, setattr='ignore', repr='EMPTY_NODE', methods={'iter_nodes': DEFAULT_ITER})
+
+In [2]: EMPTY_NODE.a
+
+In [3]: EMPTY_NODE.b = 10
+
+In [4]: for leaf in EMPTY_NODE.iter_nodes():
+   ...:     print(leaf)
+   ...:
+# Nothing printed
+```
